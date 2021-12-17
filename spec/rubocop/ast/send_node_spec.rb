@@ -1016,6 +1016,38 @@ RSpec.describe RuboCop::AST::SendNode do
     end
   end
 
+  describe '#anonymous_block_argument?', :ruby31 do
+    context 'with an anonymous block argument' do
+      let(:source) { 'def m(&) foo.bar(&) end' }
+
+      it { expect(send_node).to be_anonymous_block_argument }
+    end
+
+    context 'with a named block argument' do
+      let(:source) { 'foo.bar(&baz)' }
+
+      it { expect(send_node).not_to be_anonymous_block_argument }
+    end
+
+    context 'with no arguments' do
+      let(:source) { 'foo.bar' }
+
+      it { expect(send_node).not_to be_anonymous_block_argument }
+    end
+
+    context 'with regular arguments' do
+      let(:source) { 'foo.bar(:baz)' }
+
+      it { expect(send_node).not_to be_anonymous_block_argument }
+    end
+
+    context 'with mixed arguments' do
+      let(:source) { 'def m(&) foo.bar(:baz, &) end' }
+
+      it { expect(send_node).to be_anonymous_block_argument }
+    end
+  end
+
   describe '#block_literal?' do
     context 'with a block literal' do
       let(:source) { '>> foo.bar << { |q| baz(q) }' }

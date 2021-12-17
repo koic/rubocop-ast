@@ -497,6 +497,38 @@ RSpec.describe RuboCop::AST::DefNode do
     end
   end
 
+  describe '#anonymous_block_argument?', :ruby31 do
+    context 'with an anonymous block argument' do
+      let(:source) { 'def foo(&); end' }
+
+      it { is_expected.to be_anonymous_block_argument }
+    end
+
+    context 'with a named block argument' do
+      let(:source) { 'def foo(&bar); end' }
+
+      it { is_expected.not_to be_anonymous_block_argument }
+    end
+
+    context 'with no arguments' do
+      let(:source) { 'def foo; end' }
+
+      it { is_expected.not_to be_anonymous_block_argument }
+    end
+
+    context 'with regular arguments' do
+      let(:source) { 'def foo(bar); end' }
+
+      it { is_expected.not_to be_anonymous_block_argument }
+    end
+
+    context 'with mixed arguments' do
+      let(:source) { 'def foo(bar, &); end' }
+
+      it { is_expected.to be_anonymous_block_argument }
+    end
+  end
+
   describe '#body' do
     context 'with no body' do
       let(:source) { 'def foo(bar); end' }

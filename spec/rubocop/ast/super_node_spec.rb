@@ -215,6 +215,38 @@ RSpec.describe RuboCop::AST::SuperNode do
     end
   end
 
+  describe '#anonymous_block_argument?', :ruby31 do
+    context 'with an anonymous block argument' do
+      let(:source) { 'def m(&) super(&) end' }
+
+      it { is_expected.to be_anonymous_block_argument }
+    end
+
+    context 'with a named block argument' do
+      let(:source) { 'super(&baz)' }
+
+      it { is_expected.not_to be_anonymous_block_argument }
+    end
+
+    context 'with no arguments' do
+      let(:source) { 'super' }
+
+      it { is_expected.not_to be_anonymous_block_argument }
+    end
+
+    context 'with regular arguments' do
+      let(:source) { 'super(:baz)' }
+
+      it { is_expected.not_to be_anonymous_block_argument }
+    end
+
+    context 'with mixed arguments' do
+      let(:source) { 'def m(&) super(:baz, &) end' }
+
+      it { is_expected.to be_anonymous_block_argument }
+    end
+  end
+
   describe '#block_literal?' do
     context 'with a block literal' do
       subject(:super_node) { ast.children[0] }

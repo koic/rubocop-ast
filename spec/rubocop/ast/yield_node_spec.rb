@@ -315,6 +315,12 @@ RSpec.describe RuboCop::AST::YieldNode do
     it { is_expected.not_to be_block_argument }
   end
 
+  describe '#anonymous_block_argument?', :ruby31 do
+    let(:source) { 'yield :foo' }
+
+    it { is_expected.not_to be_anonymous_block_argument }
+  end
+
   describe '#block_literal?' do
     let(:source) { 'yield :foo' }
 

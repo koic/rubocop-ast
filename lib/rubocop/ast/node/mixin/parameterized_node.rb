@@ -60,6 +60,14 @@ module RuboCop
           (last_argument.block_pass_type? || last_argument.blockarg_type?)
       end
 
+      # Whether the last argument of the node is an anonymous block argument.
+      # i.e. `&`.
+      #
+      # @return [Boolean] whether the last argument of the node is an anonymous block argument
+      def anonymous_block_argument?
+        arguments? && last_argument.blockarg_type? && last_argument.name.nil?
+      end
+
       # A specialized `ParameterizedNode` for node that have a single child
       # containing either `nil`, an argument, or a `begin` node with all the
       # arguments
